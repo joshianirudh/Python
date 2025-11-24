@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 def timer(func: Callable) -> Callable:
     """Measure execution time of functions"""
-    @functools.wraps(func)
+    # @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
         result = func(*args, **kwargs)
@@ -19,7 +19,7 @@ def cache_result(func: Callable) -> Callable:
     """Simple memoization decorator"""
     cache = {}
     
-    @functools.wraps(func)
+    # @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # Create cache key from args and kwargs
         key = str(args) + str(sorted(kwargs.items()))
@@ -37,7 +37,7 @@ def cache_result(func: Callable) -> Callable:
 def validate_types(**expected_types):
     """Decorator to validate function argument types"""
     def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
+        # @functools.wraps(func)
         def wrapper(*args, **kwargs):
             # Get function signature
             import inspect
@@ -80,15 +80,11 @@ class RateLimiter:
         self.calls = []
     
     def __call__(self, func: Callable) -> Callable:
-        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             now = time.time()
-            # Remove old calls outside time window
             self.calls = [call_time for call_time in self.calls if now - call_time < self.time_window]
-            
             if len(self.calls) >= self.max_calls:
                 raise Exception(f"Rate limit exceeded: {self.max_calls} calls per {self.time_window} seconds")
-            
             self.calls.append(now)
             return func(*args, **kwargs)
         return wrapper
@@ -107,11 +103,8 @@ if __name__ == "__main__":
     # Test caching and timing
     result1 = expensive_calculation(100)
     result2 = expensive_calculation(100)  # Should hit cache
-    
-    # Test validation
+
     process_data([1, 2, 3], 2)
-    
-    # Test rate limiting
     for i in range(4):
         try:
             result = api_call('/users')
